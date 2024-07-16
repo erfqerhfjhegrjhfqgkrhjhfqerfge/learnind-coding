@@ -1,0 +1,44 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $name = $data['name'];
+    $email = $data['email'];
+    $age = $data['age'];
+    $ipAddress = $data['ipAddress'];
+    $latitude = $data['latitude'];
+    $longitude = $data['longitude'];
+    $browser = $data['browser'];
+    $os = $data['os'];
+    $deviceType = $data['deviceType'];
+    $screenResolution = $data['screenResolution'];
+
+    // Save the user's information to a file or database
+    $userInfo = array(
+        'name' => $name,
+        'email' => $email,
+        'age' => $age,
+        'ipAddress' => $ipAddress,
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'browser' => $browser,
+        'os' => $os,
+        'deviceType' => $deviceType,
+        'screenResolution' => $screenResolution
+    );
+
+    $jsonData = json_encode($userInfo);
+
+    // Check if the file exists, if not, create it
+    if (!file_exists('user_info.json')) {
+        file_put_contents('user_info.json', $jsonData, LOCK_EX);
+    } else {
+        file_put_contents('user_info.json', $jsonData, FILE_APPEND | LOCK_EX);
+    }
+
+    echo 'User information saved successfully';
+} else {
+    http_response_code(405);
+    echo 'Method not allowed';
+}
+?>
